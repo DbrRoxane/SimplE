@@ -6,8 +6,8 @@ from os import listdir
 from os.path import isfile, join
 
 class Tester:
-    def __init__(self, dataset, model_path, valid_or_test):
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    def __init__(self, dataset, model_path, valid_or_test, device):
+        self.device = torch.device(device if torch.cuda.is_available() else 'cpu')
         self.model = torch.load(model_path, map_location = self.device)
         self.model.eval()
         self.dataset = dataset

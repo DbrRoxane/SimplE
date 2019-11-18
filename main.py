@@ -13,6 +13,8 @@ def get_parameter():
     parser.add_argument('-neg_ratio', default=1, type=int, help="number of negative examples per positive example")
     parser.add_argument('-batch_size', default=1415, type=int, help="batch size")
     parser.add_argument('-save_each', default=50, type=int, help="validate every k epochs")
+    parser.add_argument('-device', default='cuda:0', type=str, help="GPU to train on")
+    parser.add_argument('-model_name', default="WN18_200", type=str, help="folder name where the model is saved")
     args = parser.parse_args()
     return args
 
@@ -26,14 +28,13 @@ if __name__ == '__main__':
 
     print("~~~~ Select best epoch on validation set ~~~~")
     epochs2test = [str(int(args.save_each * (i + 1))) for i in range(args.ne // args.save_each)]
-    dataset = Dataset(args.dataset)
     
     best_mrr = -1.0
     best_epoch = "0"
     for epoch in epochs2test:
         start = time.time()
         print(epoch)
-        model_path = "models/" + args.dataset + "/" + epoch + ".chkpnt"
+        model_path = "models/" + args.model_name + "/" + epoch + ".chkpnt"
         tester = Tester(dataset, model_path, "valid")
         mrr = tester.test()
         if mrr > best_mrr:
@@ -43,7 +44,10 @@ if __name__ == '__main__':
 
     print("Best epoch: " + best_epoch)
 
+    with open("models/" + args.model_name + "/best_epoch.txt", "w") as f:
+        f.write(best_epoch)
+
     print("~~~~ Testing on the best epoch ~~~~")
-    best_model_path = "models/" + args.dataset + "/" + best_epoch + ".chkpnt"
-    tester = Tester(dataset, best_model_path, "test")
+    best_model_path = "models/" + args.model_name + "/" + best_epoch + ".chkpnt"
+    tester = Tester(dataset, best_model_path, "test", device=args.device)
     tester.test()
