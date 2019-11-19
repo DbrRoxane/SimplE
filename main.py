@@ -35,7 +35,7 @@ if __name__ == '__main__':
         start = time.time()
         print(epoch)
         model_path = "models/" + args.model_name + "/" + epoch + ".chkpnt"
-        tester = Tester(dataset, model_path, "valid")
+        tester = Tester(dataset, model_path, "valid", device=args.device)
         mrr = tester.test()
         if mrr > best_mrr:
             best_mrr = mrr
