@@ -43,7 +43,7 @@ class Trainer:
 
     def save_model(self, chkpnt):
         print("Saving the model")
-        directory = "models/" + self.dataset.name + "/"
+        directory = "models/" + self.args.model_name + "/"
         if not os.path.exists(directory):
             os.makedirs(directory)
         torch.save(self.model, directory + str(chkpnt) + ".chkpnt")
